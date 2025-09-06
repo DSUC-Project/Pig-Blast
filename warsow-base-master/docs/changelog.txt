@@ -1,0 +1,1684 @@
+:: :: Changes from 2.01 to 2.1
+
+General:
++ The client will probe the official Warsow mirror for all .pk3 downloads before attempting to download the file from game server.
++ Third-party .pk3 downloads are stored in a separate directory to prevent them from overriding basewsw assets or shaders.
++ When connected to a pure server, do not fully reload the game assets on map change.
++ Changed default console font to monospace Droid Sans.
++ Changed help messages for 'callvote map' to contain the title of the map being voted for.
++ Added tab-completion of console commands and variables to chat.
++ Downloaded third-party add-ons will now go into separate filesystem directory. Use +set fs_usedownloadsdir 0 on the command line to disable such add-ons altogether.
++ Improved support for Quake 3/Quake Live maps.
+
+Renderer:
++ Offloaded the renderer to a separate thread. r_multithreading 0 reverts to traditional single-threaded mode.
++ Added r_maxfps to cap the refresh framerate in multi-threaded mode, changed cg_showFPS 1 and 2 to display refresh and client framerates respectively.
++ Increased the number of background loader threads to 4.
++ Fixed support for palette-based PNG images with alpha channel.
++ Use optimal VRAM storage format for grayscale lightmaps when deluxemapping is disabled.
+
+Gameplay:
+- Don't render flesh hits for RG and MG pellets as they were often mispredicted.
++ In bomb gametype, reset all map entities to their initial state at round start.
++ Allow grenades to be shot straight down.
++ Disabled the minimum walljump height if jump button is pressed.
++ Fixed instagib shots stopping on the first hit player.
+
+Server:
++ The server will now re-open console log file on SIGUSR1.
++ Running multiple servers in the same homedir won't corrupt .pk3 files downloaded via autoupdates.
+
+Modding:
++ Expose "random" entity property to gametype scripts.
++ MeansOfDeath (MOD_RIOTGUN_S, MOD_GRENADE_SPLASH_S, etc enums) is now passed as the fourth argument to "kill" score event in gametype scripts.
++ Added G_ResetLevel() to gametype scripting API. The function resets all map entities to their initial state, keeping clients intact.
++ Added Client::getMMLogin() method to gametype scripting API, which returns the match-maker login for authenticated players.
++ Added hasChallengersRoulette, forceTeamHumans, forceTeamBots, disableObituaries gametype properties to scripting API.
+
+Linux:
++ Changed base data, cache and runtime directory paths to conform to XDG specs.
++ Fixed MOUSE4 and MOUSE5 mouse buttons support.
+
+Mac:
++ Changed base cache directory path to ~/Library/Cache/.
++ Fixed MOUSE4 and MOUSE5 mouse buttons support.
+
+Mapping:
++ Added "random" key support to func_timer and target_delay, specifies delay variance. Total delay = delay +/- random seconds.
++ Added "delay" key support to "target_delay" for backwards compatibility with Q3 maps.
+
+Race:
++ Sector reports are now buffered until the end of the race.
++ Top command to display records in reverse order.
++ More records are now stored (30).
++ Added quickmenu with basic commands.
++ Picking up a weapon doesn't remove it from the map.
++ Associate records with login names when possible.
++ Color- and case-insensitive nickname associations for records.
++ Weapon information is now saved when saving a position.
++ Allow loading prerace-saved positions in prerace.
++ Added setting a speed for the saved position (only in practicemode).
++ Limited announcer sounds to once per player.
++ Simple randmap vote with a pattern to search for.
++ The kill command will now make spectators join.
++ Nice checkpoint feedback in the console.
++ Disabled starting a race while alive after finishing.
++ Fixed the respawner after finishing.
++ Allow racerestart while not racing.
++ Linked kill to racerestart.
++ Fixed displaying of the top scores in the hud. They are now shown when you connect.
++ Save no more than one time per player to the local highscore file, so the highscores are not populated by one player.
++ Print finish and sector times to the console so they can be looked at later.
++ Assign saved top times to their owners when they reappear.
++ Added practicemode with noclip and position save / load commands.
+- Disabled warmup.
+
+HUD:
++ Apply localization to scoreboard strings.
++ Expose system mono font to the HUD via con_fontSystemMono.
++ Draw crosshair even when out of ammo.
++ Updated the "connection interrupted" icon.
++ Added drawCleanStatString and drawCleanPlayerName commands for drawing player and team names without color codes and forcing the current color.
++ Added TEAM_ALPHA_NAME and TEAM_BETA_NAME constants to draw team names with drawStatString.
++ drawPlayerName now ignores the current color and defaults to white, only taking the current alpha into account.
+
+WarsowTV:
++ Fixed demo playback.
+
+UI:
++ Fixed random crash on vid_restart.
++ Color correction profile can now be applied to the "worldview" widget by specifying the "color-correction" RCSS property.
++ Improved demo player modal window.
+
+
+:: :: Changes from 2.0 to 2.01
+
+General:
++ Rewinding demos no longer breaks POV switching.
++ Fixed client-side crashes in CTF: Tactics game mode.
++ Corrected the list of assets released under Creative Commons Attribution-NoDerivatives license (see license.txt).
+
+Server:
++ Fixed race condition which was preventing multiple server instances to complete initialization in case they were sharing the same home directory.
++ Bugfixes and improved performance for the built-in HTTP server.
+
+UI:
++ Fixed memory leaks, improved peformance for the server browser with l10n enabled.
+
+Renderer:
++ Automatically disable multithreading if Nouveau graphics driver is detected (Linux).
+
+HUD:
++ Updated adem HUD.
++ Updated strafe.hud for all HUDs.
+
+
+:: :: Changes from 1.52 to 2.0
+
+General:
++ Switched to Creative Commons license for media assets.
++ Added full out-of-the-box gamepad support (XInput on Windows, SDL on Linux and OS X).
++ The engine automatically lowers the frame rate to 24 FPS and enables sleep state when the game is minimized.
++ Multi-threading improvements for the following; fixed race conditions, reduced latency and the amount of context switches.
++ .pk3 files explicitly named as "pure" are now preferred to different .pk3 files.
++ Restricted downloads of binary modules and "pure" content to official Warsow web mirror.
++ Greatly reduced memory footprint for fonts (especially for CJK).
++ Pressing Escape key during the map load or connection set-up will now cancel the process much quicker.
++ New high resolution "flat" icon.
++ Maximum refresh rate now defaults to 250 fps.
++ It is now possible to pause demo playback at the end of a demo file, instead of dropping to main menu (see "demo" command help).
++ Added "flipped view" mode, set "cl_flip" to "1" to enable.
++ Use HTTPS for secure authentication to matchmaker.
+
+Renderer:
++ 30% to 50% overall performance improvement.
++ Greatly reduced VRAM footprint for textures.
++ Added support for texture arrays, used for lightmaps.
++ Added KTX texture format support.
++ Enabled binary cache for GLSL programs to speed up startup time by default now.
++ Enabled multi-threading to speed up map loading by default now.
++ Curved meshes are now optimized to remove excessive polygons.
++ Changed rendering order so that the sky is now rendered after world geometry to minimize overdraw.
++ Fixed infinite far clipping plane calculations.
++ The renderer now queries the operating system for available screen resolutions.
++ Shadowmaps now account for normals of geometry they are cast on, making them less prone to be visible through walls and ceilings.
++ Added "stencilTest" shader keyword.
++ Added per map colour correction support. Toggle-able with cg_colorCorrection 0/1, maps can define colorCorrection <file path> key in worldspawn to use color correction profile.
+- Removed "vid_mode", "vid_customwidth" and "vid_customheight" console variables in favour of "vid_width" and "vid_height" for video modesetting.
+- Dropped support for "noDepthTest" shader keyword.
+- Dropped "r_colorbits" console variable (used to set desktop colour depth).
+
+Gameplay:
++ New Tutorial game mode.
++ Added 3 new awards:
+++ First Frag (awarded to the first fragger);
+++ Fair Play (say "gg" to your opponents during the post-match using the chat or the vsay);
+++ Man of the Match (You must score the most + achieve the ""Fair Play" award). -See above-.
++ Added sounds for Lasergun, Electrobolt and Instagun impacts.
++ New spawn points selection algorithm: returns the furthest point to which there's less than 4 points on the map; otherwise it returns to a random one, excluding the closest 3 points.
++ Ammo packs dropped on a players deaths, now actually contain strong ammo.
++ The movement style now defaults to "old movement", set "cg_movementStyle" to "1" for "new movement".
++ Incorporated a number of movement fixes from Racesow.
++ Ranked servers will now announce a players profile name at warsow.net alongside the nickname of the players entrance to the server.
++ On ranked servers, the "players" command now also prints login names for authenticated players.
++ After joining a server, the game menu is now opened automatically.
++ On ranked servers, certain votes now require players to be authenticated.
++ Votes now ignore AFK players.
++ In round-based game modes, in-active players are not removed until the beginning of the next round.
++ Added bot navigation files for wda5 and wbomb6.
++ Player movement prediction now works properly when riding a moving platform.
++ New RL/GL trail effect, cg_rocketTrail & cg_grenaderTrail merged into cg_projectileTrail.
++ Bots will now ignore chatting players.
++ Reduced respawn sound volume by 35%.
++ Added new callvote options "shuffle" and "rebalance".
++ Decreased weapon respawn timer to 10 in Duel.
++ In bomb, players can now move at crouch speed during the pre-round; upped maximum running speed to 320ups.
+- Removed 'Team Domination' game mode.
+
+Graphics:
++ New "illuminati" gibs.
++ New Instagun & Electrobolt decals.
++ New "simple items" sprites.
++ New teleportation\spawn effect.
++ New EB beam texture for cg_ebbeam_old 1.
++ New default EB beam effect.
++ New Lasergun beam, added hit model for LG endpoint.
++ New bullet hit decal and model.
++ Improved rocket launcher projectile texture.
++ Added gloss textures for BigVic and Bobot player models.
++ Added cg_viewBob, viewport smoothing/bobbing to falling/high jumps.
++ Bomb model colour follows the planted state dynamic light color (red when planted, orange normally).
++ Disabling gun "bobbing" now also disables fire and idle gun animations.
++ New damage hit effect (cg_showBloodTrail).
+
+Weapons:
++ Reduced Rocket Launcher pick-up ammo count to 5.
++ Reduced Lasergun and Plasmagun pick-up ammo count to 50.
++ Increased Lasergun and Plasmagun ammo box count to 100.
++ Increased Electrobolt ammo box count to 10.
++ Removed custom gravity and friction from Grenade Launcher projectiles.
++ Unified knockback of Grenade Launcher and Rocket Launcher to 100.
++ Unified minimum knockback of Grenade Launcher and Rocket Launcher to 35.
++ Unified splash radius of Grenade Launcher and Rocket Launcher to 125.
++ Changed Gunblade full recharge and reload time to 600ms.
++ Changed Gunblade projectile damage, splash radius and knockback to 40, 70 and 90 respectively, self-damage ratio increased to 100%.
++ Increased Gunblade melee damage to 50 and decreased reload time to 600ms.
++ New Riotgun spread pattern based on Fibonacci/sunflower spirals.
++ Increased per-pellet knockback for Riotgun to 7 (140 on 100% hit), spread reduced.
++ Increased Rocket launcher reload, damage and projectile speed to 950ms, 80 and 1150ups respectively.
++ Increased Grenade launcher reload, damage and self-damage ratio to 800ms, 80 and 100% respectively.
++ Increased DPS for Lasergun to 140, knockback increased to 14.
++ Increased Machinegun bullet damage to 10, reload time increased to 100ms, spread removed.
++ Increased knock-back for Electrobolt to 80.
++ Increased Plasmagun speed and knockback to 2500ups and 20 respetively.
+
+Maps:
++ New Tutorial map.
++ Improved wdm6.
++ Improved wdm1 item layout.
++ Added colour correction profiles for wdm5, wbomb6, wbomb1.
+- Removed wdm3.
+- Removed wca2.
+
+Mapping:
++ "target_print" entities can now provide overlay help messages/hints to players (use the the "helpmessage" key in Radiant/map editor of choice).
++ Added support for "target_kill" and "target_teleporter" entities from Quake3.
++ Use "gravity" attribute on the "worlspawn" object to set map gravity.
+
+Localizations:
++ Added 9 new localizations: Belarusian, Bulgarian, Lithuanian, Portuguese (Brazil), Portuguese (Portugal), Romanian, Swedish, Turkish, Ukrainian.
++ Maps can now be localized individually (drop .po files into l10n/maps/<mapname>).
++ Centre-printed messages and map locations are now localizable.
+
+Sound:
++ Added "s_globalfocus" option: when enabled the game will continue to play its sound and music even if the user switches to another application.
++ It is now possible to use .ogv video files as background music tracks.
++ Fixed support for remote .ogg music tracks/streams.
++ Reduced default sound mixer delay from 200ms to 140ms (snd_qf).
++ The background music is now not interrupted at demojumps.
+
+HUD:
++ Added current time to the HUD in the race mode.
++ Added text animation for game awards.
++ All HUD elements are now resolution-independent.
++ Optimized rendering of scoreboard strings.
++ Scripting: it's now possible to pass a non-constant math expression to setFontSize.
++ New spec HUD, added adem HUD.
+
+UI:
++ Added voicecomm menu for Team Deathmatch, Bomb, CTF and CTF: Tactics game modes (bound to Left Shift by default).
++ Revamped title screen, this incorporates a players profile and stats from warsow.net.
++ Added an option for server browser to open a dialogue with suggested game servers after the search is complete.
++ Added quit confirmation dialogue.
++ Added descriptions for game modes.
++ Added pre-load option, enabled by default (set "ui_preload" to "0" to disable).
++ Added several new configurable options.
++ Added confirmation dialogue for "Move to TV" command.
+- Removed IRC chat tab.
+
+Server:
++ The built-in HTTP server now runs in a separate thread.
++ Optimized file transfers from the built-in HTTP server.
++ Matchmaker HTTP authentication now respects sv_ip.
+
+WarsowTV:
++ Fixed an issue with the automatic chase-cam, which occasionally goes rampant in round-based game modes.
++ Enabled TCP connections support.
+
+Linux:
++ Switched over to SDL2 for video initialization and input.
+NOTE: versions prior to SDL2 suffer from doubled mouse sensitivity. This is expected to be fixed in SDL 2.0.4.
++ ALT+Tab works now.
++ Keyboard input doesn't steal the whole system focus.
++ The game now respects system keyboard layout.
++ Switched over to dynamic linking for support libraries.
+
+Windows:
++ The window can be minimized when the game is running in windowed mode.
++ ALT+F4 works again.
++ The UI now respects system DPI settings.
++ Added support for Japanese and Korean input to the chat.
+
+SDK:
++ Added NetRadiant and Q3Map2 with KTX texture format support, older versions won't load the textures properly.
++ Added .map files and models for all stock maps.
++ Added source files for textures and models.
++ Switched to cmake as the unified build system for C/C++ code.
++ Added Dockerfiles for cross-compilation.
++ Added debian meta-package to install all engine dependencies.
++ Updated to AngelScript 2.29.2. 
+
+
+:: :: Changes from 1.5 to 1.51
+
+Engine:
++ Bug-fix: built-in HTTP server now accepts URL-encoded resource URI's in queries.
++ Improvement: faster map loading times.
+
+Renderer:
++ Feature: use binary cache for GLSL programs to improve start-up time (cvar "gl_ext_get_program_binary", off by default).
++ Feature: asynchronous texture loader (cvar "r_multithreading", off by default).
++ Improvement: a lightweight GLSL shader is now used for simple materials with no normalmap, gloss or decals.
+
+Sound:
++ Feature: added multi-threading support: sound mixer and background music loader now run in separate threads.
++ Improvement: normalized some of the game sounds to 0.9db.
+
+UI:
++ Bug-fix: fixed announcer volume slider.
++ Bug-fix: other bug-fixes.
+
+Models:
++ Improvement: tuned Jason PadPork skin images for better performance and visibility.
+
+HUD:
++ Bug-fixes.
+
+Windows:
++ Improvement: Warsow process isn't bound to a single CPU core any-more (used to be a workaround for glitches caused by NVidia's 'Threaded OpenGL optimization") 
+
+Linux:
++ Improvement: gamma ramp size can now take values up to 4096.
+ 
+:: :: Changes from 1.03 to 1.5
+
+Engine:
++ Feature: added built-in HTTP server (TCP port 44444) to serve UI AJAX queries and file downloads to clients.
++ Feature: added localization support to User Interface and HUD (the language is auto-detected at the first start-up).
++ Feature: added support for TrueType and OpenType fonts.
++ Feature: distinguish between left and right ALT, SHIFT, CTRL key presses.
++ Feature: gzip-compression of demo files.
+- Feature: dropped support for Quake1 and Quake2 maps.
+- Feature: dropped support for bitmap fonts.
++ Improvement: entities with active events use distance-based server side culling (prevents fast moving players from suddenly appearing in POV).
++ Improvement: optimized cinematics playback by offloading YCbCr->RGB colour-space conversion to the GPU.
++ Improvement: domain names for master servers are resolved asynchronously at startup to prevent slow or N/A DNS servers from blocking.
++ Improvement: Linux : updated input code to use XInput2.
++ Improvement: Linux : hint the window manager to bypass compositing in full-screen mode.
++ Improvement: increased the maximum number of simultaneously loaded models, sounds and shaders.
++ Bug-fix: fixed various audio/video synchronization issues with cinematics.
++ Bug-fix: force vertical synchronization during playback of fullscreen cinematics.
++ Bug-fix: re-sampled Ogg/Vorbis sounds had the looping position set to wrong value.
++ Bug-fix: editing a democam or adding a new one doesn't break spline paths.
+
+Maps:
++ Improvement: Revamped wdm2 visuals.
++ Improvement: Improved wdm12 lighting.
++ Bug-fix: added missing clips to wbomb6.
+
+Models:
++ Improvement: upgraded Jason Padpork player model.
+
+Music:
++ Feature: Added 5 new tracks from Warsow OST.
+
+Renderer:
++ Feature: moved renderer from the engine core to separate DLL.
++ Feature: rewritten rendering back-end, GLSL2+-compatible. 
++ Feature: GLSL shaders are now loaded from disk allowing customization and easing development.
++ Feature: added support for foliage surfaces and instanced rendering.
++ Feature: added 'soft particles' effect to explosions and halo shaders.
++ Feature: added FXAA support.
++ Feature: added RGB shadowmaps (fall-back rendering path when GL_ARB_shadow extension isn't available).
++ Feature: added r_brightness cvar, useful for monitors that are too dark.
+- Feature: removed planar stencil shadows.
+- Feature: removed bloom.
+- Feature: removed r_ignorehwgamma cvar and associated functionality.
+- Feature: removed r_lighting_diffuse2heightmap cvar and associated functionality.
++ Improvement: Q3A shader commands previously processed on the CPU are now processed in vertex shaders on the GPU.
++ Improvement: optimized shadowmaps and changed them to use orthographic projection.
++ Improvement: added LOD support to shadowmaps (shadowmaps dynamically lower their resolution depending on the distance to the viewer).
++ Improvement: optimized VRAM footprint on modern GPUs for maps and models using half-precision floats.
+
+Mapping:
++ Feature: added misc_video_speaker entity to steam synchronized samples from the nearby videomap shader with audio spatialization.
++ Feature: added func_timer entity.
++ Feature: added target_relay entity.
++ Feature: added target_delay entity.
+
+HUD scripting:
++ Feature: new drawing commands: drawStringRepeat, drawStringRepeatConfigString
++ Feature: added new set of font commands: setFontFamily, setSpecialFontFamily, setFontSize and setFontStyle.
++ Feature: added #WEAP_INSTAGUN constant.
++ Improvement: improved scoreboard sorting (thanks hettoo).
++ Improvement: upgraded crosshair images to higher resolution (thanks adem).
+- Feature: removed setFont command.
+- Feature: removed %MATCH_TIME variable.
+
+UI:
++ Feature: TAB-completion of player names in chat box.
++ Feature: added callvotes menu.
++ Feature: added "Watch on TV" button to chase-cam menu.
++ Feature: Added Russian, Japanese, French, Polish, Chinese, Dutch, Spanish, Hungarian, German, Italian, Finnish localizations.
++ Bug-fix: fixed rare crash in server browser menu.
+
+Console:
++ Feature: CTRL+MWHEEL up/down increases/decreases console font size.
++ Feature: added TAB-completion for "demo", "cinematic", "exec", "whois" and "stats" commands (thanks hettoo).
++ Feature: "imagelist" and "shaderlist" commands now accept glob pattern as an optional parameter.
++ Feature: CTRL+R now does bash-style command history search.
++ Feature: CTRL+C now works in Linux (thanks Kalhartt).
+
+Game-play:
++ Change: changed knock-back from splash weapons from linear to quadratic and removed horizontal distance clamping.
++ Change: changed Riotgun pattern from spiral to a more traditional one, with wider horizontal spread.
++ Feature: added cg_gun_alpha console variable to control gun opacity.
++ Feature: picked up items now leave ghost trails in warm-up mode.
++ Feature: allow vote changing. The maximum number of changes is controlled with server console variable g_vote_maxchanges (thanks hettoo).
++ Feature: added opcall "specstotv" which moves spectators to connected TV servers.
++ Improvement: improved auto-join balancing (thanks hettoo).
++ Improvement: optimized AI code.
++ Improvement: default movement physics are now closer to old movement style
++ Bug-fix: map rotation now considers the current map too (thanks hettoo).
++ Bug-fix: maps were always missing one spawn indicator.
++ Bug-fix: wall-jumps had direction bias (more obvious on larger maps).
++ Bug-fix: removed silent bits from hit sounds (thanks adem).
+
+SDK:
++ Feature: game modules are now C++ - compatible.
++ Feature: AngelScript 2.28.1.
++ Bugfix: fixed compilation with Clang.
++ Improvement: map models (prefabs) are now bundled with SDK.
+- Improvement: C-compatibility layer removed from Angelwrap library.
+  Linux:
++ Change: downgraded to libpng 1.2.
+
+
+:: :: Changes from 1.02 to 1.03
+
+New stuff:
+- Higher-poly health models.
+- Regeneration powerup. Mappers can add this in radiant by adding 'item_regen' item.
+- New map: wda5.
+- More detailed wdm5.
+- Server browser has sorting now. However, this needs a manual UI .pk3 update, download it here (place to basewsw).
+- Meat gibs removed, cg_gibs values bigger than 1 now increase amount of pixel gibs.
+
+Fixed stuff:
+- /whois -1 crashes the server.
+- Users can workaround the banlist by supplying two ip addresses in the userinfo.
+- Memory leak in linear allocator.
+- Negative values of Demojump break POV change.
+- Mitigated problems with serverbrowser performance.
+
+Gameplay balancing to clean up some rushy problems, most of which originated from weak ammo removal:
+- RL: -100ups +50ms reload.
+- RG: +5dmg per blast.
+- GL: -20 splash +50ms reload.
+- PG: -1dmg per cell and -200ups.
+- MG: +10dps.
+- Bomb has 5 less nades, from 15 to 10.
+
+-Chronicexe 27/7/15 Edit
+
+:: :: Changes from 1.01 to 1.02
+
+Engine:
+- Bugfix: crashes on maps with fog volumes.
+
+UI:
+- Bugfix: invert mouse option wasn't at times properly reset.
+
+Gameplay:
+- Bugfix: damaging corpses doesn't affect player's damage stats anymore.
+
+
+:: :: Changes from 1.0 to 1.01
+
+UI:
+- Bugfix: Server browser didn't query for servers after connecting a server.
+- Bugfix: Demoplayer slider didn't work if demo was opened with double click.
+- Bugfix: Removed selection of weak and strong crosshair.
+- Bugfix: Switching between Match browser and Local game broke 'Instagib' and 'TV' tabs.
+- Added option for inverting mouse movement to the UI.
+- Server browser now queries for LAN servers.
+- Removed screen color depth option.
+
+Engine:
+- Bugfix: T_TransformVectorToScreen didn't adjust fov to widescreen - fixes player name locations at top of player models.
+- Bugfix: Fixed GLSL compilation errors in dynamic light shader for NVidia/Nouveau.
+- Bugfix: Properly reload volatile shaders when needed (fixing shader problems in maps after map loading).
+- Renderer now renders up to 4 shadowmaps in 1 pass instead of 1 per pass.
+- Removed r_colorbits cvar (+ UI: Removed screen color depth option).
+- Added TAB-completion for "alias", "aliasa" and "unalias" console commands.
+- Compiled binaries with SSE2 compliant compile flags to restore compability with older CPU's ("Received signal 4" error).
+
+Stats/matchmaker:
+- Bugfix: Fixed crash on login if username contained %n.
+- Bugfix: Changing userinfo broke "whois" cmd and stats collection.
+- Bugfix: Stats sometimes got lost, especially in duel/da due match UUID generating.
+
+Gameplay:
+- Bugfix: After running out of ammo, player could change back to empty weapon and firing weapon with empty weapon, which would fire previous weapon with ammo, causing firing have no sound aka "EB ammo bug".
+- Bugfix: TDO points didn't work in some maps.
+- Bugfix: vid_restart reset cg_clienthud variable to cg_spechud.
+- Bugfix: Turret firing-flash shader was missing.
+- Bugfix: Automatic respawn didn't work after completing a race.
+- Bugfix: Damaging dead things and world objects no longer increases damage stats.
+- Bumped Lasergun damage from 6.5 to 6.75 (130 > 135dps).
+- Bumped Riotgun damage from 90 to 95 per blast.
+- Bumped CA ammo counts: +20 rl +5 rg +5 eb.
+- Bumped Bomb ammo counts: +5 eb gl +40 lg +20 pg.
+- Electrobolt now always gibs.
+
+Maps:
+- New feature: maps can now include custom entities written with AngelScript.
+
+Platform specific fixes:
+  Windows:
+- Bugfix: Removed portable profile option from windows installer. Fixes permission problems after installation with Vista/Windows 7.
+
+  Mac:
+- Bugfix: Toggling r_swapinterval didn't affect vsync.
+- Bugfix: Fixed crash on startup with Mountain Lion.
+
+  Linux:
+- Bugfix: Fixed segmentation fault when changing fs_game (Linux).
+
+SDK:
+- Packaged API documentation for AS was out of date.
+
+:: :: Changes from 0.62 to 1.0
+
+Gameplay:
+
+- Remove weak ammo.
+- Weapondefs based on promod:
+  * LG 130dps
+  * RL 75dmg
+  * GL 65dmg
+  * Plasma 150dps (15 dmg per cell)
+  * EB 75dmg
+  * RG 90max dmg
+  * MG 80dps
+  * GB 45dmg cut 45dmg projectile
+- Promod armor system (GA 50/100, YA 75/125, RA 100/150, 0.66 protection rate)
+- Increased LG knockback and slightly longer stun time for LG.
+- Handicap (handicap 10 = 10% less damage).
+- Fix some 45deg ramps broken by missing deg -> rad conversion.
+- Octagon hitboxes.
+- Fixed rocketsplash on stairs and ledges ("nodmg bug").
+- cg_showTeamMates (required drawTeamMates in .hud):
+- cg_specHUD to specify HUD for spec mode.
+- ctf_flag_instant callvote (enables instant flag captures and unlocks).
+- New default huds, some old huds removed and new ones added.
+
+Engine:
+
+General:
+- Add 'follow fragger' chasecam mode.
+- Support for OGG Theora videos.
+- Support for PNG.
+- Model format changed to IQM
+- Update to the latest AngelScript version (2.23.1).
+- Metadata support in demo files to store date and time of the match, final score, title and other useful data.
+- Support for http mirroring server demos and downloading demos from http with demoget.
+- Support for streaming remote ogg files via HTTP.
+- Servers check for autoupdates daily (every 2 days before).
+- Increased sound mixing precision (snd_qf).
+- Make bots somewhat more aware of the gametype and pmove states.
+- Highlight minimized game window on important events (when alt+tabbed).
+- Added two new parameters to 'cinematic' command to control console avilability during playback of a fullscreen video and maintaining original aspect ratio of the video.
+- Added "cinepause" console command to pause and unpause fullscreen video playback.
+- Split video codecs code into separate library.
+- Obsoleted potentially hearable set (PHS).
+- Fixed randomization of m3u playlists shuffling.
+- Improved Mumble integration.
+- Fix: "killable" doors, similar to the one Schaaf provided for buttons.
+- Fix: Map rotation now skips non existent maps.
+- Fix: shaking corpses.
+- Fix: DA challengers are moved to specs due to inactivity.
+- Fix: when a text with a color from white to green is sent with a number after it, irc clients think that the number is a part of the color code. Example: "^0t^13^0st (t3st)" results in tst in black.
+- Fix: corrupt .jpg files don't silently abort program execution anymore.
+- Cap fov to 140.
+- Add cg_specHUD.
+- Autorecord actions now work for ongoing matches.
+
+Performance improvements:
+- Changed how VBO's work for lightingDiffuse map models for optimal performance.
+- Added builtin GLSL program to render most commonly used Q3A shader stages to better utilize VBO's.
+- Take map area visibility into account when creating VBO's for surfaces.
+- MD3 and IQM models now use VBO's too.
+- Optimized image loading functions (greatly reducing loading times)
+- Model and sound caching (greatly reducing loading times)
+- GPU skinning dual quaternions (greatly improving model rendering performance, up to 300%+ better)
+- Improved shadow mapping filters.
+- Planar shadows may not cause severe performance hit due to excessive map tracing.
+- Add another optional parameter to 'material' pass, which if specified blends entity colored decal with diffuse image. This allows single-pass player model skins.
+- Discovered GLSL program permutations are stored in the cache file and precached at the game start.
+- Fix: particle entities emitting invisible lights. Also make light radius depend on particle radius.
+
+Graphical features:
+- Nicer curves/patches (no leaking in patches).
+- New LG beam gfx based on Ultrak1ll's beam (LG beam is not pure, so people can also make their own beams, or use the 0.6 one).
+- Fast and bumpmapped GLSL dynamic lights.
+- r_drawflat (+ r_ceilingcolor r_floorcolor r_wallcolor) to set custom environment colors.
+- r_lighting_greyscale to remove colored lights from the maps.
+- added cg_lgbeam_old to swap between 0.6 and 1.0 LG beam graphics
+
+OS-specific improvements:
+- alt+entering between fullscreen and windowed mode is now instant in Windows (no vid_restart required).
+- m_raw for linux (using Xinput2).
+- Unicode input in X11.
+
+Music
+
+- New song by jihnsius.
+
+Announcements
+
+- New announcements by Jehar. Courtesy of Tastyspleen TV @ http://tastyspleen.tv/
+
+Maps
+
+- A lot of optimizations to old maps, around 10 to 30% better FPS compared to 0.6.
+- Removed: wdm8, wdm11(old), wdm20, wamphi1, wctf5.
+- New maps: wdm11, wdm16, wdm17, wbomb6.
+- Retextured: wdm6, wda1, wda2, wamphi1.
+
+User interface
+
+- New user interface with xhtml/css/angelscript syntax using librocket. (changeable with cvar for custom ui's).
+- Real map as a background instead of a video.
+- Integrated IRC chat.
+
+Global statistics and skillranking
+
+- Global statistics using warsow.net accounts (ranked servers need a server key).
+- In-game profile and friends list.
+- Skillranking (not shown or used anywhere yet, but the system there).
+- Added 'whois' game command.
+
+Gametype scripting
+
+- All builtin classes have been renamed from this "cClass" to "Class".
+- It's required to use function pointers to set callback functions for entities instead of hardcoded names.
+* Example:
+some_trigger_think()
+@entity.think = some_trigger_think;
+- Both UI and GT scripts can now use namespaces.
+- Moved all core classes to angelwrap library.
+- Added builtin StringUtils namespace.
+
+HUD scripting
+
+- New hudscript function "setScale"
+* New parameters for setScale: DEFAULTSCALE, NOSCALE, SCALEBYWIDTH and SCALEBYHEIGHT.
+- New strafehud functions.
+- HUD elements are now precached, to avoid loading media on the first draw whenever possible.
+- Round to the nearest integer value in CG_LFuncCursor, CG_LFuncMoveCursor and CG_LFuncSize
+
+Warsow TV
+
+- Background music tracks can now specified for each channel and lobby (tv_lobbymusic cvar), which will be later played by connected clients. This can be used to stream shoutcasts in OGG format.
+- Fix: TV heartbeats
+- Fix: occasional "Invalid POVnum 0" error on wswtv clients.
+- Fix: fs_gamedir changes on wswtv causing 'bad inline model number' errors for clients upon connecting.
+- Fix: PM_FREEZE movement state not affecting TV spectators.
+- Fix: broken movement prediction after postmatch.
+
+Introduction video
+
+- Introduction video by decap and KILLME. Courtesy of Torn Productions @ http://tornproductions.org/ and Cho-Media @ http://cho-media.org/
+
+:: :: Changes from 0.61 to 0.62
+
+Engine/game:
+- Changed gunblade selfdamage to 100% and knockback to 78.
+- Simplified rendering of 'rgbgen lightingDiffuse' shaders, which allowed to merge them into larger vertex buffer objects at load time to improve performance.
+- Sped up culling of simple planar shadows to improve performance.
+- Take map area visibility into account when creating vertex buffer objects for surfaces.
+
+Bugfixes:
+- Particle entities spawned too many dynamic lights with them.
+- Fixed occasional disco lights on wbomb2.
+- Fixed a nasty bug in q1 bsp loader that could potentially crash clients.
+
+:: :: Changes from 0.6 to 0.61
+
+Engine/game:
+- Added identity and context info for mumble 1.2.
+- Added precaching of playlists (up to 15 files).
+- Cache resolved addresses for master servers so clicking 'join game' doesn't cause UI or background music to stutter.
+- Further reduced the no ammo penalty to 50 msec.
+- Precache more GLSL programs at renderer initialization.
+- Use rounding to the nearest integer value in CG_LFuncCursor, CG_LFuncMoveCursor and CG_LFuncSize.
+- Added Inter Quake Export command for SKM models (skm2iqe).
+- Renamed console variable "cg_extrapolate" to "cl_extrapolate".
+- Automatically close all potentially open menus after succesfully connecting to a server.
+- Increased Rocket Launcher selfdamage to 0.75.
+- OpenAL sound module automatically converts stereo sounds to mono so they can be properly spatialized.
+- Updated armor skins.
+
+Bugfixes:
+- Made the fog texture nopicmip.
+- Changed the default value for s_musicvolume to match default.cfg.
+- Fixed crash in instagib, which was usually triggered by instajumps.
+- Shootable doors and buttons worked only once.
+- Fixed off-by-one error in glDrawRangeElements 'end' parameter.
+- Fixed occasional glitches in parsing of colored text in irc module.
+- Added missing degrees to radians conversion, fixing some 45 degrees ramps.
+- Fixed wswtv heartbeats.
+- Fixed wswtv "Invalid POVnum 0" error.
+- Fixed handling of negative clientarea in snap_write.c that caused crashing on certain maps.
+- Check whether the sound library has actually been loaded before calling GetSoundAPI.
+- Fixed stuttering models when extrapolation was off.
+- Fixed "fs_gamedir" changes causing "bad inline model number" errors for clients upon connecting to wswtv.
+- Fixed off-by-one error in Cbuf_Execute, which caused the game to crash upon insertion of huge text buffer from clipboard.
+- Fixed PM_FREEZE movement type not affecting wswtv spectators.
+- Fixed mouse and movement lag after postmatch on wswtv servers.
+- Server now detects and skips non existing maps specified in the map list.
+- Made the bomb "king of bongo" announcements unpure.
+- Fixed chat/teaminfo overlapping placement in huds.
+- Fixed gl_ext_vertex_bufer_object- typo in gfx profiles.
+- Fixed crash bug in "headhunt" gametype.
+- Map fixes: fixes for wca1, wdm19 when using vertex lighting.
+- Map fixes: wctf1 caulk fixes (see-through floors at flags).
+- Map fixes: wdm5 teleport placements and layout fixes.
+- Map fixes: GA spawned only in duel in wdm6.
+
+:: :: Changes from 0.5 to 0.6
+
+Maps:
+- New maps: wbomb3, wbomb4, wbomb5, wdm12, wdm18, new wctf5.
+- Duel Arena maps have been renamed back to wdaX.
+- Most of the original maps have been re-textured and re-lit for improved visuals.
+
+Engine/game:
+- Vertex buffer objects support for improved performance.
+- Improved netcode: Latency reduction by the use of half-snapshot extrapolation.
+- q3map2 and the engine have been improved for more realistic and smoother lighting.
+- Improved particle support: added new misc_particles map editor entity.
+- Automatic resolution detection at initial startup.
+- Added more widescreen resolutions.
+- Fixed aspect ratio for widescreen resolutions.
+- The game can now stream demos from a HTTP server.
+- Added 4x4 PCF shadow maps filter with fewer texture lookups compared to other modes.
+- Added server console variable "sv_iplimit" to limit connections per ip address, defaults to 3. A value of 0 acts as no limit.
+- Added Quake Live style mouse acceleration, m_accelStyle and m_accelOffset console variables control the acceleration behavior.
+- Added IPv6 support.
+- Added positional audio support via Mumble (open source voice chat software), set console variable "cl_mumble" to 1 to enable.
+- Added "r_screenshots_fmtstr" cvar that allows embedding of timestamps into screenshots' filenames.
+- Fixed double execution of autoexec.cfg if the game was started with a custom game directory.
+- Fixed execution of config.cfg upon game directory change.
+
+Music:
+- New menu music: one new song and an improved remix of Warsow 0.2 menu music.
+- New in-game soundtrack: 6 tracks by Jihnsius.
+- Support for playlists:
+    Play invidual files with: /music loop.(ogg|wav) [intro.(ogg|wav)]
+    Load playlists with: /music (filename.m3u) (mode)
+    modes: "1" shuffle, "2" loop, "3" loop random track.
+    loads basewsw/sounds/music/(filename.m3u/ogg/wav)
+- New console variables: "cg_playList" and "cg_playListShuffle" to specify custom a playlist file to be played during matches and optionally shuffled.
+- New console commands: "pausemusic", "nextmusic" and "prevmusic" to fast forward to the next track or repeat the previous track in the playlist.
+
+Gameplay/gametype scripts/misc:
+- New weapon skins.
+- New chat console, themeable from the HUD scripts.
+- Non-round based gametypes include spawn place indicators in warmup.
+- Added Damage indicator to crosshair, changes color on hit. Customizable with cg_crosshair_damage_color.
+- Player models turn grey when dead.
+- New background video + new randomized loading screens.
+- Cartoon hit effects for big damage splashes.
+- Removed 175>150 armor decay from duel.
+- Weapons have been slightly balanced compared to 0.5.
+- New gametype: Capture the flag: Tactics.
+- Bomb has been rewritten, improved bomb spot indicator graphics.
+- In-game announcements to promote community events.
+- TAB-completion for map names in console.
+
+:: :: Changes from 0.42 to 0.5
+
+New Features:
+- Added new maps: wdm2, wdm18, wdm19, wdm20, wctf4, wctf6, wca3, wbomb1, wbomb2.
+- Added a new weapon, the Machinegun.
+- Added a new item, the Ultrahealth.
+- Added a new player model: Big Vic.
+- Added support for custom gametype scripting via AngelScript.
+- Added new base gametypes:
+    Bomb and Defuse: A team-based gametype focused on destroying and defending two bomb sites.
+    Team Domination: There are two teams and several domination points on a map.  Capturing all points by running on them and protecting wins the round.
+    Headhunt: One player is tagged and the other players must chase him down and kill him.
+- Added player-activated shield to Instagib gametypes.  It is activated by crouching and has a warmup time. but can protect you against damage like a warshield for a very short amount of time.
+- Added new Clan Tag system.
+- Added classless Clan Arena mode.
+- Added new Warsow TV features:
+    Warsow TV servers now show up in the server browser.
+    Warsow TV can now record demos.  Automatic demo recording is supported.
+    Warsow TV channels list now lists information about the game being played (Match Name, Gametype, etc.).
+    Warsow TV channels can now be renamed.
+    Warsow TV channels can now be joined from the warsow:// URI by specifying the channel name after the server address.
+- Added player stun effect after being damaged.  While stunned, a player can not walljump.
+- Added client-side weapon prediction.
+- Added damage bonuses for direct hits and midair hits.
+- Added new, family-friendly gibs.
+- Added raw mouse support for Windows XP.
+- Added support for automatic pk3 file detection.  Servers can find new pk3 files and update on the fly.
+- Added support for automatic dedicated server version updates.
+- Added the sv_demodir cvar which specifies a directory where automatic serverside demos are stored.
+- Add the ability to dynamically link new entities to AI navigation.
+- Added support for Quake 1 and Quake 2 maps.
+- Added respawn timers for most important game items displayed for spectating players.
+- Added fps-independent model animations.
+- Added procedural leaning animations to players.
+- Added normalmap-based cellshading material to use on player models.
+- Added support for shader templates.
+- Added new surfaceparm: nowalljump.  Use this to disallow walljumping on a particular surface.
+- Added Russian characters to fonts.
+
+Changes:
+- Modified all maps from 0.4x.  They have been upgraded to take advantage of new items, renderer improvements, etc.
+- Modified jump button behavior.  You now jump automatically by holding jump, there is now no longer any need to release the jump button.  There is a clientside cvar cg_noAutohop to disable this behavior.
+- Modified walljumping behavior.  You can no longer walljump off of other players, noimpact brushes and sky brushes.
+- Improved user interface, expect a fair bit more polish.
+- Improved explosion visuals.
+- Improved knockback and push behavior (explosions, etc.).
+- Improved weapon and movement balancing, too many changes to list.
+- Improved spawning system.
+- Improved chasecam system.
+- Improved and optimized client side prediction.
+- Improved sound spazialization and server-side sound culling.
+- Improved mouse reponsiveness for all input modes.
+- Improved demoavi, it now exports audio as well.
+- Changed server query protocol to be 100% compatible with Quake III Arena.
+- Removed old wdm2 from 0.4x series.
+
+
+:: :: Changes from 0.41 to 0.42
+
+New Features:
+- added game operator functionality:
+      Game operators are players with elevated status who have increased power over the server, but do not have rcon access.
+      Servers admins set an operator password with "g_operator_password".
+      Players authenticate themselves as an operator using "operator <password>" or "op <password>".
+- added opcall command, which allows game operators to call votes which
+instantly pass.
+- added two new chat filtering commands - cg_chatFilter and cg_chatFilterTV - for filtering chat messages in normal games and when spectating tv matches respectively.  These two commands accept the following bitmask values:
+      "0" enables all messages
+      "1" filters global chat
+      "2" filters team chat
+      "4" filters TV spectator chat
+- added seek and pause functionality to demo menu.
+- added demo playback capability to wswtv.
+
+Changes:
+- changed network protocol to improve serverside culling of projectiles and
+playback of single-pov demos in wswtv.  These changes are backwards-computable.
+- changed wswtv chat color to white.
+- modified ip filters, they now stick around between maps.
+
+Fixes:
+- fixed unreasonably large challengers queue delays.
+- fixed servers not providing version info due to long hostnames.
+- fixed clan arena coaches being dropped into spectator mode.
+- fixed several issues with ip filtering.
+- fixed several crash bugs and memory leaks in wswtv.
+- fixed graphical glitches when demojumping backwards.
+- fixed minor gfx menu bug.
+
+:: :: Changes from 0.4 to 0.41
+
+New Maps:
+- added two new CTF maps, wctf2 and wctf3.
+- added revised version of wdm10 with a new item layout, wdm10a.
+
+New Features:
+- added delay between getting off the flag stand and the timer counting up again (600ms).
+- added jumping animation when using jump pads.
+- added new callvote option "callvote kickban", which will temporarily ban a specified player from a server.
+- added menu options for various graphical effects and player preferences.
+- added option to alternate between map names (wdm1, wdm2, etc.) and map titles (Flew Over, Chronodynamic, etc.) in the start server menu.
+- added new chasecam follow modes. Entering the follow modes is done by adding one of the following parameters to the chase command:
+      <player name or ID> will chase the given player.
+      "auto" will chase the highest fragger unless there's a flag or powerup carrier, in that order.
+      "carriers" will give the user pov control unless there's a flag or powerup carrier, in that order.
+      "flags" will give the user pov control unless there's a flag carrier.
+      "powerups" will give the user pov control unless there's a powerup carrier.
+      "score" will chase the highest fragger.
+- added default autoexec file for Warsow TV (tvserver_autoexec.cfg).
+- added feature that appends the current number of specs to TV server's name.
+- added query protocol support to Warsow TV.
+- added ability to pass server password in URI (scheme://[<password>@]<server>[:<port>]).
+- added rcon support to Warsow TV, and a tv_rcon_password cvar to go with it.
+- added Xavatar's path_spline cameras.
+- added GLSL distortion pass to textures/russus/teleporter.
+
+Changes:
+- changed Rocket Launcher reload time to 850.
+- changed strong grenades to bounce once before detonating.
+- changed weak rocket speed to 1000ups (for real this time).
+- shrank item bounding box by 8 units on vertical axis.
+- modified instagun sound.
+- modified rocket explosions to look slightly less intense.
+- changed Warsow TV chat to look more distinct.
+- modified CTF bonuses to be shown as awards.
+- modified medium profile to use smaller texture sizes for portalmaps (256) and shadowmaps (512).
+- modified behavior of cl_compresspackets:
+      "0" disables packet compression.
+      "1" compresses packets bigger than the average client packet size (default).
+      "2" compresses all packets.
+- changed serverside password cvar to tv_password.
+- default client packets-pre-second (cl_pps) is now 35.
+- default max Warsow TV clients (tv_maxclients) is now 32.
+- modified Warsow TV chase commands to function identically to normal chase commands.
+
+Fixes:
+- fixed missing textures by adding ecel texture pack.  Sorry about that, clan arena fans!
+- fixed Warsow TV multipov.  Chaining Warsow TV servers should now be possible.
+- fixed areaportals over Warsow TV.
+- fixed broken shader (textures/HazelH/floorpanels_mirror).
+- fixed bug with minimap showing enemy locations in CA and for coaches.
+- fixed bug with saving cam files that only had subtitles.
+- fixed bug which prevented the player last in the last player slot from interacting with the level.
+- fixed crashes caused by excessively long names.
+- fixed Duel Arena being absent from the server filter.
+- fixed electrobolt damage doubling.
+- fixed "ERROR: Game Error: G_Spawn: no free edicts" server crash.
+- fixed "inverted strafing" movement bug which was causing undesired results when attempting to bunnyjump using +moveleft and +moveright.
+- fixed missing textures in wca1.
+- fixed old movement (cg_oldmovement 1) delay being applied when entering a new level.
+- fixed overpowered gunblade shots in Clan Arena.
+- fixed ping spikes caused by client command buffer underflow.
+- fixed problem with textures/hazelh/verticalborder2's non-deluxe path (scripts/hazelh.shader).
+- fixed scroll list in the server menu.
+- fixed rendering of portal views.
+- fixed start server menu forgetting map names.
+- fixed vintage Quake 2 bug concerning nonworking banlists.
+- fixed shaders with "material" passes crashing in 2D.
+
+Removed:
+- removed battleye and forcemodules from dedicated_autoexec.cfg.
+- removed depreciated "follow" command, use "chase" instead.
+- removed unfinished path_sin cameras.
+
+:: :: Changes from 0.32 to 0.4
+
+New Features:
+- Added Warsow TV!
+- Added cl_sleep 0|1 (default 0), fixes 100% load issues for some clients.
+- Added ability to automatically play a sound file while a demo with the same name is playing, if they are in the same directory.
+- Added cg_teamcolored_beams 1|0, sets LG and EB beams to team colors (thanks learn_more).
+- Added cg_showminimap 1|0, toggles whether minimap is shown in HUD (thanks learn_more).
+- Added minimaps for each map.
+- Added client sound prediction.
+- Added Duel Arena (DA).
+- Added effects to various movements (dash, walljump, ...)
+- Added cg_damage_indicator 1|0 (default: 1), toggles damage indicator for HUD. Red marks will appear on the sides when hit if enabled.
+- Added new iTDM mode, players must now control predefined zones in a map.
+- Added ability to read map fullnames from file (maps/<mapname>.txt).
+- Added ability to use "map <map name>" rather than just the "map filename".
+- New CTF timers added:
+    Players must stand next to opposing team's flag for 3.5 seconds to grab it;
+    Players must stand on their flag base's for 2 seconds to capture opposing team's flag.
+- Added wda1, wda2, wda3, wda4, wda5, wda6.
+- Added the new instagun.
+- Added wdm2 (TdM/blx), wdm11 (Grumx).
+- Added wdm11 (Grumx).
+- Added new player model; Bobot.
+- Added cg_cartoonRockets and cg_rocketTrail to control new rocket effects.
+- Added "precache" command for HUD scripts to allow precaching of resources.
+- Added "match <restart|advance|status>" server command to aid administrators.
+- Added cg_chatBeep 1|0, toggles a beep sound when a player sends a chat message.
+- Added graphics profiles ranging from low to extreme for people with different spec systems.
+- Added graphics profiles support to Graphics setup menu.
+- Added per-pixel shader support.
+- Added selfdamage ratios for weapons.
+- Added new flag model.
+- Added webdownloads for mod directories.
+- Added native support for vsync on *nix systems.
+- Added con_chatmode 1|2|3, 1 = console works like Q3, 2 = QW
+- Ctrl-Enter in console sends a team chat message
+
+Changes:
+- Renderer now supports many new features, see features.txt for more information
+- iCTF no longer has any timers.
+- Removed wdm2, wctf2 and wdm11 (acid's maps).
+- Updated wtest4 status to wdm4.
+- Updated wtest17 status to wdm17.
+- Updated a lot of maps to support the new renderer features.
+- Increased the gravity to 850 (old value 800).
+- A minimum value of 24 for cl_maxfps has been enforced.
+- Warsow now tries to autodetect sys_affinity on load.
+- Bots now spam a lot less vsays.
+- Riotgun now uses a spiral-motive, it's not random anymore (thx uz).
+- Strong grenades explode on impact.
+- Rocket launcher weapon settings changed.
+- In CA you now spawn with your teammates.
+- Removed the old CTF timers!
+- Dropped flag now stands up and rotates.
+- Tweak the netcode to be a mixture between 0.32 and 0.21.
+- CTF hud changes, see huds/ctf.hud.
+- iTDM hud changes, see huds/inc/capture_areas.hud.
+- Outlining is now done by the GPU (cg_outlineWorld and cg_outlineModels), if possible.
+- Grenade physics have changed.
+- Bots now move more like humans and time items.
+- Removed plasma spam lag.
+- Spectators are no longer allowed to vote during a duel in progress (g_allow_spectator_voting, defaults to 1)
+- Decreased startup time considerably by not calculating MD5-checksum of the the whole file for each .pk3 found.
+- Now displays MOTD even if cg_showhelp is 0.
+- Game modules can now be downloaded.
+- Greatly improved downloads and config execution from mod directories.
+- Strong Riotgun now fires 22 pellets at 5 damage each.
+- Weak Riotgun now fires 18 pellets at 4 damage each.
+- Rocket selfdamage has now been set to 75%.
+- Gunblade now has an automatic reloading system, it will fire all of the available ammo (max 10), and does a maximum of 40 damage.
+
+Fixes:
+- No longer allows names such as "^1   ".
+- Fixed servers acting weird if they're stuck on the same map for a while (999 ping bug).
+- Fixed server not responding to broadcasts on local network when sv_public set to 0.
+- Fixed 100% accuracy not being allowed on scoreboards.
+- Fixed no ammo weapon switching bug.
+- Fixed players going through player-only-solid material in race gametype.
+- Fixed cointoss message staying the same color as that of the players nickname.
+- Various code cleanups and performance improvements.
+- Fixed names like "^^1foobar" being colored when they shouldn't be.
+- "name ^Anna^" etc works (^ not followed by a digit is normal text now)
+
+:: :: Changes from 0.31 to 0.32
+
+New Features:
+- Added new CA map - wca2
+- Added motd code to server
+Added cvars:
+  cl_downloads_from_web_timeout - timeout value for web downloads
+        sv_MOTD = set to any non zero value to enable MOTD
+        sv_MOTDString = string to set MOTD value to
+        sv_MOTDFile = file to read MOTD from.
+  sv_MOTDString takes precendence over sv_MOTDFile. The MOTD is only
+      updated on map change.
+  Added a new client command "svmotd [flag]" that returns the motd. If the
+  flag argument is present the MOTD is displayed in the center of the screen
+  otherwise it is printed normally. This command is automatically called by
+  the client
+- Keyboard scrolling of menu lists
+- Maplist in a scrollbox
+
+Changes:
+- Removed BattlEye
+- EB damage 65
+- Changed sort-key on scoreboard (CA: sort by Dmg, TDM: sort by Net)
+- No more class-less CA (so disable the g_ca_classmode vote)
+
+Fixes:
+- GL midair award
+- Water RL midair award
+- Fixed ghost LG
+- Fixed userinfo updates forcing a player model on spectators
+- Rl combos were doable with riotgun (RL->RG or the other way around)
+- Don't account telefrag damage for stats
+- Fix a bug that broke map downloads if .bsp file wasn't referencing any textures from .pk3 file it was packed in
+- Force an update of g_needpass upon startup
+- Don't do plasma backtraces in race mode
+- Sound focus bug in Windows
+- Fixed alt+tab crashes on some windows platforms
+- Only update the follower if somebody actually picks up the enemy flag
+- Save sort order of serverlist between sessions
+- Plugged memory leak in .skp loader
+- Gibs and ejection brass don't cast shadows anymore
+- Memory corruption bug with cg_shadows > 2
+- Fixed some minor UI annoyances
+- Fixed rare "Client command overflow" crash
+- Other stability improvements
+
+:: :: Changes from 0.3 to 0.31
+
+New Features:
+- Added BattlEye Anti-Cheat Engine, supporting both Windows and Linux (more information on http://www.battleye.com)
+- Added team autobalance (g_teams_allow_uneven).
+- Added logconsole_timestamp 0|1 to have timestamps in logfiles. (Format: yyyy-mm-ddThh:mm:ss)
+- Allow showing stats for other players
+- Always prints stats to a console when match has been finished
+- Added SHOW_AWARDS to HUD scripts
+- Added VIDWIDTH, VIDHEIGHT, INSTAGIB, ZOOM, SHOW_ZOOM_EFFECT (cvar check), SHOW_AWARDS (cvar check), DAMAGE_GIVEN and DAMAGE_RECEIVED to hud scripts.
+- Added "&&" and "||" operators to HUD scripts.
+- Added zooming effect.
+- Added cg_showZoomEffect cvar.
+- Added show others zooming when in chasecam or in demo playing.
+- Added cvars: sv_showRcon, sv_showChallenge and sv_showInfoQueries to print console feedback of these packets.
+- Added cvar cl_checkForUpdate (def 1) to disable update checking.
+- Added self-explanatory cg_showSelfShadow cvar (the default value is 0)
+
+Changes:
+- wdm11 remix and other slightly changed maps
+- Only allow 32 characters at max in player's name, counting the escaped sequences
+- Add fast dynamic lights option (light coronas)
+- Folders are now colored with yellow in demolist. For browsing to the upper directory, use the top ".." menu item, as in most file browsers
+- config.cfg is now written with Windows line-separators (CRNL)
+- PF_Configstring now reports the index of overflowed configstring
+- Recompiled most of win32 libs and binaries for better performance and/or resulting filesize (VC 2005 SP1 is now required to compile the binaries)
+- Added "s_openAL_device" cvar and "sounddevices" command for switching the OpenAL device (currently, choosing software emulation generally helps to fix some OpenAL glitches)
+- Removed the "OpenGL Extensions" menu, it was confusing
+- cl_maxfps can't be set to values lower than 24
+- The ammo pack item is now precached if it can be potentially dropped during the game
+- Made Riotgun's shot denser, Plasmagun damage upped slightly, EB damage increased, RL splash radius increased/min damage decreased.
+- Changed default value of selfdamage and teammdamage on callvete ca_competitionmode.
+- Changed CA scoreboard damage-based.
+- Move maxfps and fov from gfx menu to player setup menu. Also add zoomfov field.
+- Reduce the time gibs stay.
+- In race: don't take splash damage from others. Don't wait for respawning after death.
+- Move client side determination of server time to the executable. Apply smoothing and stop it freezing the virtual time.
+- Simpler method of user command execution in the server code.
+- Allow chasecam switching to dead players unless in CA.
+- Clamp fov and zoomfov ranges in steps. zoomfov accepts values from 1 to 60 and fov from 60 to 160.
+- Make the player names use the same font as the pointed player.
+- Default m_filter to 1, in_minmsecs to 1.
+- Make bots reaction time slower.
+- HUD: scale team info layouts font size for different resolutions.
+- Misc code cleanups, speed improvements
+
+Fixes:
+- Windows: Fixed wrong renaming of downloaded pk3 files.
+- GA armor pickup logics.
+- Unix only: Don't shutdown the server when receiving EOF from stdin
+- Fix bug that made visiting the team aspects menu fill the userinfo and give error when trying to join a server
+- Add possibility to save stats to a file after match has been finished
+- Fix non-DGA mouse on Linux, based on patch from MKC*Nightmare
+- Don't show weapon up animation when switching POV in multiview demo
+- Fix demojump somewhat, not sure if it still works very well
+- Fixed missing spawn sounds.
+- Fixed packetloss/ping spikes interrupting movement.
+- Fixed fonts with images bigger than 256x256.
+- Fixed a crash when weak lasegun was hitting 2 deadbodies.
+- Do not stop with error fatal on a configstring overflow.
+- Don't apply stairs view-smoothing to ramps.
+- Fixed mismatch in god-like award between console and hud prints.
+- Fixed prevent MVDs to write negative frame identifiers for game commands (aka: fix demo's "invalid areabits size" error).
+- Speed of rotation on the YAW-axis is now framerate-independent for UI models.
+
+:: :: Changes from 0.21 to 0.3
+
+New features:
+- Clan Arena gametype
+- New camming system for demos
+- Internal server browser now supports sorting the server list, adding
+  favourite servers, stopping search and it also now remembers your search
+  settings
+- Awards system
+- Option to show on the HUD what movement keys a player is pressing
+- A zoom command
+- Possibility to automatically follow powerup/killer/flag etc. while being
+  a spectator
+- Coaching functionality for team games
+- Death messages can now also be shown as icons on the HUD
+- Ability to show other players as ghosts in race mode
+- Skyportal support for maps
+- Ability to set weapon's FOV independant from the view FOV
+- A command to change to the last used weapon
+- Ability to configure automatic weapon switching
+Windows only:
+- .pk3 files are now locked while they are needed
+Linux only:
+- Pasting is now supported
+- It is now possible to quickly switch between fullscreen and windowed mode
+  without reloading the game module and media
+
+New media:
+- Added player model Padpork, including new sounds
+- New weapon models for all weapons except the Rocket Launcher
+- New skin for the Rocket Launcher
+- New models for all armors
+- New icons and simpleitems for all the items
+- Added maps: wamph1, wamphi2, wca1, wctf5, wdm11, wdm14, wtest15, wtest16,
+  wtest17, wtest18
+- Modified maps: wdm7, wdm5, wdm1, wctf1
+- Modified textures: cha0s_wsw set
+- Added character animations for dashing and walljumping
+- New default HUD
+- Added one menu music track
+- Added 7 postmatch music tracks
+- New lasergun sounds, including special sound for laser with quad
+- Added special pain sounds when getting hit while wearing warshell
+- Added a special hit sound for making a kill
+- Added sound for projectiles hitting the water
+- New sounds for using jumppad, picking up warshell, picking up weapons, grenade
+  bounches, picking up or using quad
+- New background video
+
+Changes:
+- Teamoverlay now also shows teammate's health and armor
+- Sound attenuation algorithm was improved and is now the same for both sound
+  modules
+- HUD system has been enchanced to allow custom speed meters, hiding pickup
+  messages with a cvar, better weaponlist etc.
+- Rockets now work differently with antilag
+- Antilag values have been tweaked somewhat
+- Midair gametype was removed
+- Automatic demo recording in race mode has been disabled
+- Fall damage was toned down a bit
+- Gametype is now displayed when connecting to the server
+- View weapon gun movement can now be completely disabled
+- Pasting of multiple lines is now possible
+- Changing the bind to bring down the console is now possible
+- Armor system has been revised
+- Many weapon settings have been changed
+Linux only:
+- The game now shuts down cleanly when receiving interrupt signal
+- EOF from stdin now shuts down the server
+
+Bugfixes:
+- Demojump command didn't work right when jumping backwards
+- Demolist and demoget commands work little better now
+- The commands seta, setu and sets didn't obey cvar latching rules
+- Strong laser didn't pass trought enemies like the weak one did
+- Weak laser didn't have light and smoke puff effects
+- HUD elements and map entities used old team names red, blue, green and yellow
+- Simpleitems and other sprites could be displayed in wrong order
+- Very small amounts of damage would only reduce armor, not health
+- Lava and slime did much too little damage
+- Freefloat spectator movement was slower during timeouts than in normal game
+- It was possible to get huge speeds by jumping against angled ceilings
+- Demo browser didn't work with filenames longer than 64 characters
+- Internal server browser didn't work with resolutions of 1600x1200 and higher
+- HUD element weaponlist didn't obey the align command
+- Many entities didn't work correctly, if two players tried to activate them at
+  the same time
+- Dead bodies were created in the race mode
+- Checkpoints in race didn't work correctly
+- Killing the player after finishing the race didn't work correctly
+- Warshell HUD timer didn't work
+- vsay_team could also be heard by the opponents
+- Too much damage was done to health, when the orginal damage was higher than
+  the amount of armor
+- Scrollbars could be too long
+- You could only have one local server per computer visible on the in-game
+  server browser
+- On certain resolution there was a black line in the screen when using the
+  bloom filter
+- Missing end quote in commands could cause strange things to happen
+- Connecting to address localhost tried to connect to the loopback server
+- The game would crash when reading really big config files
+- Flag pickup icons were missing
+- There was a performance issue when joining large channel using the IRC module
+- The game would crash if the width of the IRC window was set to 0
+Linux only:
+- Downloading of pk3 files didn't work when fs_usehomedir was set to 1
+
+:: :: Changes from 0.2 to 0.21
+
+Changes:
+- Antilag was tweaked
+- exec command now works even if you don't specify the .cfg extension
+- Serverside duel demos now have player names in the filename
+- Option to enable automatic team locking was removed
+- Clients can now set slower than default packet sending interval
+- Items that have targetname set are not visible anymore
+
+Bugfixes:
+- Sometimes players got stuck right after connecting to the server
+- Items dropped while in countdown weren't removed
+- demoavi command had few issues
+- timescale variable didn't work properly
+- Doors couldn't be opened by shooting them
+- Server download of files with spaces in the filename didn't work
+- Maps without VIS acted strangely
+- exec command crashed if there was an \ character in the filename
+- Callvote unlock misbehaved
+- Race mode emptied the inventory when passing the startline, instead of
+  giving default items
+- Sometimes console was spammed with "MAX POLYS reached" messages
+- Automatic blade attack didn't do extra damage with Quad
+- You sometimes floated out of the map, when in end match scoreboard
+- cointoss command's help message had a typo
+- demojump and demopause commands didn't give error messages when not playing
+  a demo
+- Announcer could be stuck in a loop repeating fight sound, when there were
+  no longer enough players left after the countdown was finished
+- Canceling a map download and then reconnecting right away didn't continue the
+  download
+- When you gibbed a teammates body, the team hitsound was played
+- wctf1 flag reset time is back to 8 again
+- It wasn't possible to download server side demos, when cl_downloads variable
+  was set to 0
+- Spawnpoint's targets were never triggered
+- Damage blend and pickup flash were shown in third person mode
+- There was sometimes an ugly sound loop while loading the map
+- If the server changed map while client was downloading, the client got stuck
+  to the loading screen
+- Flood protection could sometimes be triggered without flooding and/or stuck
+  on until map restart
+- Scoreboard sometimes stopped updating
+- After connecting to a server you could see "entered the game" messages
+  multiple times
+- Players could receive damage from the environment even in timeout
+- If a bot was removed to make room for a connecting player, it wouldn't join
+  back after the player left
+
+:: :: Changes from 0.12 to 0.2
+
+Major new features:
+- Anti-lag type hit detection
+- Optional support for OpenAL audio
+- Serverside demo recording and uploading to clients
+- Pure system to make sure that client uses same data as the server
+- In-built IRC client
+
+New media:
+- New character animations
+- New maps: wctf2, wrace1, wtest7, wtest13
+- Major new versions of wtest1 and wtest3, now known as wdm6 and wdm3
+- Monada character now has LOD models
+- New plasma hit decal
+- Added bright skins for the player models
+- Added Warshell model
+- New Quad model
+- New versions of many sounds
+
+New features:
+- CTF textures now change colors based on the team colors
+- New powerup: Warshell
+- Command to toggle your ready state
+- New HUD command to draw a bar with a custom image
+- Command to jump to a specific point in a demo
+- New optional mouse filter
+- Command to "toss a coin" in game
+- Ability to set an alternative key for generating color escapes
+- Command to show the IP of the server you're currently connected to
+- In-built server now supports the filtering of instagib games
+- Command to show scores while a button is being pressed
+
+Changes:
+- Many changes to the game network code
+- New grenade physics, including bouncing on the jump pads
+- Plasma balls now have volume against players, but not against walls
+- Many smaller tweaks for most of the weapons
+- Bots now have a [BOT] prefix that normal players can't use
+- Team names are now Alpha, Beta, Gamma and Delta
+- Respawn time of Quad is now 90 seconds
+- In duel the first spawn of armors and mega health are now delayed by
+  15 seconds
+- In team games first powerup respawn is delayed by 15-30 seconds
+- Removed some limits on filename sizes used by Warsow
+
+Bugfixes:
+- Internal server browser didn't show any servers for some people
+- Using map command from console didn't work when playing a demo
+- Bigger timescale value than 10 caused problems in when playing demos
+- Long player names were drawn over other values in the scoreboard
+- If the player who had the megahealth disconnected, the megahealth didn't
+  spawn back
+- Callvote remove didn't work in duels
+- Connecting while server was changing map or restarting might leave player
+  stuck in the connection screen
+- Empty parameters didn't work in rcon commands
+- After downloading a map textures weren't shown properly
+- Demoavi command didn't work correctly
+- When spectating a team game in freefloat mode everyone looked like an enemy,
+  if force enemy team setting was enabled
+- Back button was sometimes over sound options in setup menu
+- Flood protection didn't work correctly
+- Final server message was not displayed properly
+- Server could output an extra nick change message when player was connecting
+- Player's inventory wasn't reset when going back over the start line in race
+- Item dropping when dying wasn't disabled in race
+- Countdown was not aborted, even if there was no longer enough people left to
+  play
+- There was a rcon related crash
+- Grenade model had a missing texture
+- Gamma slider in the UI was inverted
+- The help message about not shooting your teammates was shown even when help
+  messages were disabled
+- There were missing images in the level loading screen
+Linux only:
+- On some configurations the game could crash when moving in or out of
+  fullscreen mode
+
+:: :: Changes from 0.11 to 0.12
+
+Bugfixes:
+- BE could kick people who had BE disabled because of packetloss
+- BE could kick people who were downloading the map because of packetloss
+- Querying list of servers from master was not working for mods
+- There were still some server crashes, with message talking about "zlib"
+- Overly long screenshot names could have .jp extension instead of .jpg
+- cg_crosshair_color setting was not working correctly after vid_restart
+- Flag stats for the HUD were not working
+- Armor and health still decayed while in timeout
+- Armor had an incorrect degradation setting
+- When opened ingame, team aspect menu drawed the model on bottom
+- Flag countdown would disappear when going to overtime
+- Carrier defense bonus was sometimes being given to the actual carrier
+- Using drawStringNum from HUD scripts crashed Warsow
+- Blood stains had an ugly gray area around them
+- Players command showed everyone with BE off with sv_battleye 2
+- Back button was in wrong place at UI sometimes
+- Two clients with the same ip couldn't connect to the same server (Windows)
+- Second player in duel got removed from the challenger queue when changing
+  map in warmup
+- Console kick command couldn't be used to kick connecting players
+- Sometimes the editing line in console got messed up
+- Demo playback had wrong speed
+- Doors with a team assigned weren't working properly
+
+Changes:
+- Many weapons now have less pickup and/or max ammo
+- Backpack now only drops current weapon's ammo plus Gunblade ammo
+- Updated Makefile to be FreeBSD compatible
+- Removed reading and writing of dedicated.cfg
+- Server browser is now a little faster
+- Added mods menu to the UI
+- Flag carrier is now able to reset flag timer by touching his own base
+- HUD icon now showed when flag is in base
+- Added flag timer sounds
+- Flag timer now turns red when there is less than 2.5 seconds left
+- Capture time is now centerprinted to the player who made the capture
+- New settings cg_explosionsAlpha and cg_explosionsRingAlpha were added
+- Viewsize slider was removed from the UI
+- Strong riotgun reload time is now the same as weak one
+- Riotgun now shoots more pellets, but does less damage per pellet
+- Flag reset at wctf1 is now 8. 
+- Remove instagib gametype, but add g_instagib server setting to make all
+  gametypes instagib
+- Added cg_crosshair_strong, cg_crosshair_strong_color and
+  cg_crosshair_strong_size settings
+- Added new callvotes: "mute <player>", "vmute <player>" (mutes vsays) and "allready"
+
+:: :: Changes from 0.1 to 0.11
+
+Bugfixes:
+- Internal serverbrowser was missing servers
+- Servers could crash with zlib error
+- Scores didn't reset after warmup in CTF
+- When there were players in challenger queue and someone disconnected during
+  countdown or playtime the match was not restarted
+- Map wdm5 was missing a teleport effect
+- UI failed to play demos with spaces in filenames
+- Long player names could go over the scores in scoreboards
+- say_team (and vsay_team) didn't work correctly when used with tokens that
+  had color in them
+- Error messages when calling a vote where broadcasted to everybody
+- Password entry didn't work when using the OK button
+
+Changes:
+- Moved crosshair size and color settings from HUD scripts to cvars
+  (cg_crosshair_size, cg_crosshair_color)
+- Added g_needpass and g_gametypes_available serverinfos for server browsers
+- Added setting for disabling all console printing (con_printText)
+- Added flag status information for HUD scripts (STATS_CTF_FLAG_RED & BLUE,
+  constants: FLAG_SAFE, FLAG_STOLEN, FLAG_DROPPED)
+- Added reminder sound when ready up is needed
+- Added text telling current match state next to the clock in default HUD
+
+Linux only:
+- For few users Warsow crashed when starting listen server
+- Non-DGA mouse didn't work properly
+- The X11 window name is now set
+- Binaries now built with no dynamic dependancy to libXxfdga and libXxfvm to
+  work with older distributions (for example Debian Stable)
+- There are now prebuilt 64bit binaries
+
+:: :: Changes from 0.072 to 0.1
+
+Major new features:
+- New weapon: Lasergun
+- CTF gametype is now fully working
+- Voicecommands with headicons to communicate with your teammates and opponents
+  (like in Enemy Territory)
+- Map downloading both from game server and from web servers
+- Ability to use custom colors for all the player models
+- Possibility to force enemies and team mates to use predefined models and
+  colors
+- New font system allowing the use of different fonts/sizes
+- Added in-game UI menu
+- Error screen when getting disconnected from server or when connection fails
+- Timeout system
+- Support for BattlEye anti-cheat engine (more information on
+  http://www.battleye.com)
+- Ability to show player names next to their models
+- Pointing teammate now shows their health and armor status
+- Challenger queue for duel servers
+- Race gametype has many new improvements
+
+Major changes:
+- Totally new splash knockback system
+- Changing gametype doesn't require a map restart anymore
+- Make projectiles appear little ahead of the player instead of right in front
+  of them. This makes projectile weapons feel more solid
+- New armor system
+- Many UI changes, especially to the internal serverbrowser
+- Netcode now uses zlib for compression
+- HUD system was rewritten
+- Many weapons have been tweaked in one way or another
+- Spawning is no longer forced to specific time, but inside certain timeframe
+  Faster respawning is now possible
+- The default server port is now 44400
+- Floats, instead of integers, are now used on server side for calculating
+  player's health and armor
+
+New media:
+- New announcer sounds by DJ Wheat of iTG
+- New CTF map: wctf1- ctf-russus
+- New duel map: wdm5 - Viciious' home
+- New midair map: wmid3 - hexagons
+- New version of map wdm1 with major changes
+- New version of map wtest4 with major changes
+- New models and skins for several weapons: gunblade, plasmagun,
+  grenadelauncher and electrobolt
+- New skins for riotgun and rocketlauncher
+- Added lasergun model and skin
+- New ammobox and ammopack textures
+- New rocket, grenade and plasma projectile models and skins
+- New explosion effects for grenade, rocket and plasma
+- New rocket and grenade trails
+- Added a rocket flare
+- New menu graphics
+- Added a default levelshot image
+- New fonts
+- Added flags
+- New andromeda model skin
+- New chatbubble
+- Added teleporter effects
+- Most simpleitems redone
+- Most HUD weaponicons redone
+- Many new sound effects
+- Tweaked some old sound effects
+
+Major bugfixes:
+General:
+- Jumping on stairs didn't work right
+- Sometimes when connecting you could get stuck in the loading screen
+- There was no feedback why connecting to server wasn't succeeding
+- Players that lost connection sometimes didn't timeout, but took up space in
+  the server forever
+- After walking through a teleporter, you might end up looking up or down
+- Automatic demos and screenshots didn't work with some nicknames
+- Internal serverbrowser sometimes stopped displaying all the servers
+- Telefrags could happen at the start of the match
+- The weapnext and weapprev commands didn't work correctly
+- Keyboard handling in the UI was broken
+- Some clients had big FPS drops once in a while
+Windows only:
+- There could be a sound flood after using ALT-TAB
+Linux only:
+- There were many troubles with keyboard handling
+- Stencilshadows didn't work
+
+More new features:
+- Weapons stats, visible on scoreboard and with console command
+- Option to use simple projected shadows
+- Mousewheel support for scrolling in UI
+- Callvoting new gametype now also changes some related settings accordingly,
+  like timelimit
+- Some camming features for demos. Still work in progress
+- Console now shows current time
+- Bots will also use voicecommands
+- Options to enable/disable screen shaking and flashing when getting hit
+- Option to disable model outlines
+- Automatically recorded demos are now sorted to subdirectories
+- Midair gametype has been improved in many ways
+- Player trails for race gametype
+- Possibility to use sudden death overtime
+- Scoreboard size can now be changed
+- Ability to relaxe input update ratio
+- Bots now adjust their skill according to server skill level
+- New gametype: Instagib
+- Ability to lock/unlock teams and invite players to locked teams
+- Some new HUD elements and support for predefined (by the game) constants
+- Bots are smarter and have better aim
+- Self shadows on models
+- Armor models now have LOD (level of detail) submodels
+- Proper nickname validating
+- Add shortcuts to drop command for easily dropping current weapon or flag
+- Allow enabling/disabling compression of outgoing packets
+- Ability set filename for console logging
+- Warsow now checks for new version on startup
+
+More changes:
+- Don't shoot when spawning
+- Hitbox is now little taller
+- Teammessage now have yellow tint
+- Crouching while in air is now allowed
+- Optional high resolution timer for Windows, enabled from commandline
+- Spawnpoints are now dropped to floor if they don't have nodrop spawnflag set
+- Limiting nickname length is now based on displayed characters (not counting
+  color tokens)
+- Allow changing HUD without vid_restart
+- avidemo command captures in jpeg format if r_screenshotJPG is set
+- Crosshair handling was moved inside HUD scripts
+- Color changes: now ^6 is magenta, ^8 orange and ^9 grey
+- Use Red and Blue as two first teams again
+- Pings now have colors in the scoreboard
+- Allow canceling writing of chat message by pressing enter when message is
+  empty
+- Use Quake 3 Arena's version of TGA loading function
+- Improve team tabs so it sends smaller updates at a faster update ratio
+- Clearer optional centerprinted killmessages
+- Give all weapons and some armor in warmup
+- Don't allow shooting while in countdown
+- Walljump counter now resets after some time
+- ALT-TAB can be used to switch between fullscreen and windowed mode in Linux
+  too now
+
+Complete list of bugfixes:
+- After match was ended you might end up chasing a player who was in spectator
+  mode
+- Small coordinates were shown instead of teleport effect
+- cg_showTeamLocations used underscores instead of spaces
+- After walking through a teleporter, you might end up looking up or down
+- In team game, when a player joined a team ingame he could get wrong skin
+  color
+- Some walljump sounds didn't get played
+- Callvoting allow_falldamage didn't work
+- Quad effect wass not removed when changing to spectator
+- Server's info string didn't work right if the hostname was too long
+- When on server alone you could get disconnected with an overflow error
+- Some binds could get stuck when entering the message mode
+- Minus commands were called over and over again when releasing keys in console
+  mode
+- Automatic demos and screenshots didn't work with some nicknames
+- cl_demoavi_scissor mistakenly worked with value 2 not with 1
+- Some TGA-textures could crash the game
+- Using jumppads didn't reset the walljump counter
+- Vote didn't fail immidiately even if it no longer had a change of passing
+- Internal serverbrowser sometimes stopped displaying all the servers
+- The game sometimes reported memory errors and crashes when using the UI
+- Sometimes when connecting you could get stuck in the loading screen
+- Clearing messagemode bind in the UI also cleared the messagemode2 bind
+- Adding bots to passworded server didn't work
+- Starting server from the UI could give wrong gametype
+- When gametype was changed an invalid scoreboard got displayed until the map
+  was changed
+- There were several small bugs in map wdm1
+- Telefrags could happen at the start of the match
+- Grenades didn't bounce when hitting downward ramps
+- Strong gunblade had bigger starting ammo than max ammo
+- Shotgun blast sometimes looked different on client side than it actually was
+  on server side
+- Port numbers were printed wrong in various places
+- The weapnext and weapprev commands didn't work correctly
+- Projectiles weren't removed when game started
+- In race mod the model didn't disappear when you respawned
+- It was possible to jump just before dying of a fall (you would still die
+  though)
+- Missing shader image is showed when levelshot was missing
+- When firing a gun that was out of ammo the no ammo sound might get played
+  many times
+- Body or head gib disappeared, if the player who died disconnected or joined
+  another team before respawning
+- Grenadelauncher's HUD icon had wrong color, when you had ammo but no weapon
+- There was a small texture missing in the players menu
+- Using gamemap with map that wasn't on the server would cause the game module
+  to quit
+- Players that lost connection sometimes didn't timeout, but took up space in
+  the server forever
+- There was no feedback why connecting to server wasn't succeeding
+- Sometimes the countdown got skipped
+- Some sounds didn't follow you like they should when in chasecam
+- Shards model was green, but simpleitem purple
+- Screen shaked when you were standing on someone's head
+- Sometimes the view shaked a little when you were in float cam mode
+- Client could fail if started with logconsole 1 set
+- The rate message could be colored by client's name
+- You needed one more frag than you should when using a scorelimit
+- Colors from spectator's name could effect his ping's color on scoreboard
+- Some things got left to the hud when you become spectator
+- Slime and lava only did health damage after you ran out of armor
+- There was a missing shader when using cg_viewsize value smaller than 100
+- Pressing delete key in chat mode produced a strange character
+- Keyboard handling in the UI was broken
+- The game clock was constantly jumping between 5:00 and 4:59 in warmup mode
+- If you hit someone at the last moment of the match, the hitsound would be
+  played after the restart
+- Few cvars got reseted silently after changing them, when on non-cheat servers
+- Death messages were sometimes wrong
+- Disabling warmup put server in loop when not enough players were around
+- Some rocket splash hits didn't register when hitting next to small edges
+- Player model wasn't properly centered in the UI
+- Leaving a team when in countdown could be used to reset warmup timelimit
+- Some connectioneless commands on client didn't check where the message was
+  coming from. This allowed anyone knowing the client port to print random
+  stuff to his console and more
+- Some clients had big FPS drops once in a while
+Windows only:
+- There could be an ugly sound flood after using ALT-TAB
+Linux only:
+- Keyboard's * key was regocnized as * and not as KP_STAR
+- Caps/Num/ScrollLock couldn't be bound
+- Non-US keyboard layouts didn't work well
+- Keys that aren't used for console (like F1) were repeated when pressed while
+  console was active
+- Stencilshadows didn't work
+- in_restart command stopped the input system
+- UI for changing sound quality didn't work
+Total of 74 user visible bugs from version 0.072a fixed

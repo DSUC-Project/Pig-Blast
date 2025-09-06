@@ -1,0 +1,5 @@
+These files are derived from vanilla 2.1 distribution.
+I'm unsure what Creative Commons version was used for the original files.
+
+shockwave_explosion_ring.tga -> should be hi-res, its an eb-beam after polar coord transform
+wavex.tga -> hi-res and less dense for first ones
